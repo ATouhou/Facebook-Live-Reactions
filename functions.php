@@ -1,14 +1,13 @@
 <?php
 
-define('SETTINGS', include __DIR__ . '/settings.php');
-
 /*
 * Gets the LIKE, LOVE, HAHA and WOW reaction counts from an object
 */
 function reactionCount($fb, $objectID, $accessToken)
 {
-    foreach (SETTINGS['REACTIONS'] as $key => $position) {
-        $fields[] = "reactions.type({$key}).limit(0).summary(total_count).as({$key})";
+    $activeReactions = ['LIKE', 'LOVE', 'HAHA', 'WOW'];
+    foreach ($activeReactions as $reaction) {
+        $fields[] = "reactions.type({$reaction}).limit(0).summary(total_count).as({$reaction})";
     }
     $reactionParams = ['ids' => $objectID, 'fields' => join(',', $fields)];
     $endpoint = '/?' . http_build_query($reactionParams);
@@ -67,7 +66,7 @@ function downloadProfileImage($uid, $width, $height)
 */
 function drawReactionCount($image, $reactions, $fontSettings)
 {
-    $activeReactions = array_keys(SETTINGS['REACTIONS']);
+    $activeReactions = ['LIKE', 'LOVE', 'HAHA', 'WOW'];
     foreach ($activeReactions as $reaction) {
         $image->text(
             $reactions[$reaction]['count'],
